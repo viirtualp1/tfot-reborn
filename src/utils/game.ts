@@ -14,15 +14,22 @@ const characters: Record<GameCharacters, Character> = {
   [GameCharacters.NIKITA]: {
     id: GameCharacters.NIKITA,
     name: "Nikita",
+    relationships: {
+      [GameCharacters.YEAR]: 100,
+    },
   },
   [GameCharacters.YEAR]: {
     id: GameCharacters.YEAR,
     name: "Year",
+    relationships: {
+      [GameCharacters.NIKITA]: 100,
+    },
   },
 };
 
 export const formattedCharacters: Character[] = [
   characters[GameCharacters.NIKITA],
+  characters[GameCharacters.YEAR],
 ];
 
 export const sequence: TextEngineSequenceStep[] = [
@@ -45,22 +52,27 @@ export const sequence: TextEngineSequenceStep[] = [
     data: {
       label: "Choose",
       action: {
+        id: "action-1",
         type: TextEngineSequenceActionType.CHOOSE_ONE,
         options: [
           {
-            text: "Option 1",
+            id: "option-1",
+            text: "Negative",
             affect: [
               {
-                character: characters[GameCharacters.NIKITA].id,
+                affectFrom: characters[GameCharacters.YEAR].id,
+                affectTo: characters[GameCharacters.NIKITA].id,
                 value: -10,
               },
             ],
           },
           {
-            text: "Option 2",
+            id: "option-2",
+            text: "Positive",
             affect: [
               {
-                character: characters[GameCharacters.YEAR].id,
+                affectFrom: characters[GameCharacters.YEAR].id,
+                affectTo: characters[GameCharacters.NIKITA].id,
                 value: 10,
               },
             ],

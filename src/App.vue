@@ -18,7 +18,7 @@
       <li
         v-for="(sequence, sequenceIndex) in textEngine.state.sequence"
         :key="sequenceIndex"
-        class="text-left border rounded-sm mb-2 p-2 text-lg"
+        class="text-left border border-emerald-500 rounded-sm mb-2 p-2 text-lg"
       >
         <template v-if="sequence.type === TextEngineSequenceStepType.DIALOG">
           <div class="bg-emerald-200 px-2 mb-1 rounded-sm">
@@ -37,6 +37,12 @@
               v-for="(option, optionIndex) in sequence.data.action.options"
               :key="optionIndex"
               class="bg-emerald-500 text-white flex-1 px-2 cursor-pointer mb-1 rounded-sm"
+              @click="
+                textEngine.dispatch({
+                  id: option.id,
+                  affect: option.affect,
+                })
+              "
             >
               {{ option.text }}
             </button>
@@ -44,39 +50,39 @@
         </template>
       </li>
     </ul>
+
+    <h2>States</h2>
+    <ul class="p-2 rounded-lg">
+      <li
+        v-for="(state, stateIndex) in textEngine.state.characters"
+        :key="stateIndex"
+        class="text-left border border-emerald-500 rounded-sm mb-2 p-2 text-lg"
+      >
+        <div class="bg-emerald-200 px-2 mb-1 rounded-sm">
+          {{ state.name }}
+        </div>
+        <div>Relationships:</div>
+        <ul>
+          {{
+            state.relationships
+          }}
+        </ul>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script setup lang="ts">
+import { reactive } from "vue";
 import { TextEngine } from "text-engine/core";
 import { TextEngineSequenceStepType } from "text-engine/types";
 import { formattedCharacters, sequence } from "./utils/game";
 
-const textEngine = new TextEngine({
+// Should be reactive to re-render states
+const gameState = reactive({
   characters: formattedCharacters,
   sequence,
 });
 
-// const sequences: TextEngineSequenceStep[] = [
-//   {
-//     type: TextEngineSequenceStepType.ACTION,
-//     data: {
-//       label: "Choose 1",
-//       actions: {
-//         type: TextEngineSequenceActionType.CHOOSE_ONE,
-//         options: [
-//           {
-//             text: "First option",
-//             affect: [
-//               {
-//                 character: "Igor",
-//                 value: 1,
-//               },
-//             ],
-//           },
-//         ],
-//       },
-//     },
-//   },
-// ];
+const textEngine = new TextEngine(gameState);
 </script>
